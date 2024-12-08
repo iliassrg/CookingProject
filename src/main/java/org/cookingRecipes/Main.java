@@ -22,5 +22,6 @@ public class Main {
             System.err.printf("Error: %s\n", e.getMessage());
         }
         new Time(file);
+        new Kitchenware(file);
     }
 }
