@@ -10,26 +10,22 @@ public class Kitchenware {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(f));
             String line;
-
+            String tagLine;
+            int beginIndex;
             while ((line = reader.readLine()) != null) {
-                // Επεξεργασία γραμμής για σκεύη
-                String[] words = line.split(" "); // Διαχωρισμός γραμμής σε λέξεις
-
-                // Ελέγχουμε αν κάποια λέξη ξεκινά με '#'
-                for (String word : words) {
-                    if (word.startsWith("#")) { // Αν η λέξη ξεκινάει με '#'
-                        // Αφαίρεση του '#' και προσθήκη της λέξης στη λίστα
-                        String item = word.substring(1); // Αφαιρούμε το '#'
-
-                        // Αν το σκεύος είναι μία φράση (π.χ., "μεγάλο αντικολλητικό τηγάνι")
-                        // πρέπει να προσθέσουμε και τις υπόλοιπες λέξεις
-                        if (item.contains(" ")) {
-                            kitchenware.add(item); // Αν είναι φράση, προσθέτουμε ολόκληρο το σκεύος
-                        } else {
-                            kitchenware.add(item); // Αν είναι μόνο μία λέξη, το προσθέτουμε απευθείας
+                if(line.contains("#")){
+                    beginIndex = line.indexOf("#") + 1;
+                    tagLine = line.substring(beginIndex,line.indexOf("{", beginIndex));
+                    if(tagLine.contains("@") || tagLine.contains("#") || tagLine.contains("~")){
+                        String[] words = tagLine.split(" ");
+                        tagLine = words[0];
+                        if(tagLine.contains(".") || tagLine.contains(",")){
+                            tagLine = tagLine.substring(0, tagLine.length() - 1);
                         }
                     }
+                    kitchenware.add(tagLine);
                 }
+
             }
 
             // Εμφάνιση των σκευών
