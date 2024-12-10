@@ -15,7 +15,7 @@ public class Time {
                 }
             }
             int sum = 0;
-            for (Integer i : time) {
+            for(Integer i : time) {
                 sum += i;
             }
             System.out.printf("\nΣυνολική ώρα:\n\t%d minutes", sum);
