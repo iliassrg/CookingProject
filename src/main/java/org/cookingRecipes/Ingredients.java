@@ -11,22 +11,26 @@ public class Ingredients {
             BufferedReader reader = new BufferedReader(new FileReader(f));
             String line;
             String inLine;
-            String unit;
-            String q;
+            int beginIndex;
+            int endIndex;
             while((line = reader.readLine()) != null){
-                if(line.contains("@")){
-                    inLine = line.substring(line.indexOf("@") + 1,line.indexOf("{"));
-                    q = line.substring(line.indexOf("{") + 1,line.indexOf("}"));
-                    if(q.contains("%")){
-                        q = q.replace(Character.toString('%'), " ");
+                    if (line.contains("@")) {
+                            beginIndex = line.indexOf("@") + 1;
+                            endIndex = line.indexOf("{", beginIndex);
+                            inLine = line.substring(beginIndex, endIndex);
+                            if (inLine.contains("@") || inLine.contains("#") || inLine.contains("~")) {
+                                String[] words = inLine.split(" ");
+                                inLine = words[0];
+                                if (inLine.contains(".") || inLine.contains(",")) {
+                                    inLine = inLine.substring(0, inLine.length() - 1);
+                                }
+                            }
+                            ingredients.add(inLine);
                     }
-                    quantity.add(q);
-                    ingredients.add(inLine);
-                }
             }
             System.out.println("\nΥλικά:");
             for(int i = 0; i < ingredients.size(); i++){
-                System.out.println(ingredients.get(i) + " " + quantity.get(i));
+                System.out.println(ingredients.get(i));
             }
             reader.close();
         }

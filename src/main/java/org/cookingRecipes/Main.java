@@ -21,8 +21,8 @@ public class Main {
         } catch (IOException e) {
             System.err.printf("Error: %s\n", e.getMessage());
         }
-        new Ingredients(file);
         new Kitchenware(file);
         new Time(file);
+        new Ingredients(file);
     }
 }
