@@ -1,28 +1,37 @@
 package org.cookingRecipes;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+
 
 public class Main {
     public static void main(String[] args) {
+        //First file
         File file = new File("pancakes.cook");
-        try {
-            FileReader reader = new FileReader(file);
-            int data = reader.read();
-            while(data != -1) {
-                System.out.print((char)data);
-                data = reader.read();
-            }
-            reader.close();
-        }catch (FileNotFoundException e){
-            System.err.println("Wrong file name!");
-        } catch (IOException e) {
-            System.err.printf("Error: %s\n", e.getMessage());
-        }
-        new Kitchenware(file);
-        new Time(file);
-        new Ingredients(file);
+        Ingredients ingredient = new Ingredients();
+        ingredient.loadFromFile(file);
+        ingredient.displayIngredients();
+
+        Kitchenware kitchenware = new Kitchenware();
+        kitchenware.loadFromFile(file);
+        kitchenware.displayKitchenware();
+
+        Time time = new Time();
+        time.loadFromFile(file);
+        time.displayTotalTime();
+
+        //Second file
+        File file2 = new File("french_fries.cook");
+
+        Ingredients ingredient2 = new Ingredients();
+        ingredient2.loadFromFile(file2);
+        ingredient2.displayIngredients();
+
+        Kitchenware kitchenware2 = new Kitchenware();
+        kitchenware2.loadFromFile(file2);
+        kitchenware2.displayKitchenware();
+
+        Time time2 = new Time();
+        time2.loadFromFile(file2);
+        time2.displayTotalTime();
     }
 }
