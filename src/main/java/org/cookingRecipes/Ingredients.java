@@ -6,7 +6,6 @@ import java.util.List;
 
 public class Ingredients {
     private List<String> ingredients;
-
     // Constructor
     public Ingredients() {
         this.ingredients = new ArrayList<>();
@@ -18,9 +17,9 @@ public class Ingredients {
     }
 
     // Add ingredient
-    public void addIngredient(String ingredient) {
+    public void addIngredient(List<String> ingredient) {
         if (ingredient != null && !ingredient.isEmpty()) {
-            ingredients.add(ingredient);
+            ingredients.addAll(ingredient);
         }
     }
 
@@ -38,23 +37,30 @@ public class Ingredients {
 
     // Process a single line to extract ingredients
     private void processLine(String line) {
-        if (line.contains("@")) {
-            String ingredient = extractIngredient(line);
-            if (ingredient != null) {
-                addIngredient(ingredient);
+        List<Integer> position = new ArrayList<>();
+        for(int i = 0 ; i < line.length(); i++){
+            if(line.charAt(i) == '@'){
+                position.add(i);
             }
+        }
+        List<String> subIngredients = extractIngredient(line, position);
+        if (subIngredients != null) {
+            addIngredient(subIngredients);
         }
     }
 
     // Extract the ingredient from the input line
-    private String extractIngredient(String line) {
-        int beginIndex = line.indexOf("@") + 1;
-        int endIndex = line.indexOf("{", beginIndex);
-        if (endIndex == -1) return null; // Guard against missing '{'
-
-        String ingredient = line.substring(beginIndex, endIndex);
-        ingredient = cleanIngredient(ingredient);
-        return ingredient;
+    private List<String> extractIngredient(String line, List<Integer> position) {
+        List<String> subIngredients = new ArrayList<>();
+        for (Integer i : position) {
+            int beginIndex = i + 1;
+            int endIndex = line.indexOf("{", beginIndex);
+            if (endIndex == -1) return null; // Guard against missing '{'
+            String ingredient = line.substring(beginIndex, endIndex);
+            ingredient = cleanIngredient(ingredient);
+            subIngredients.add(ingredient);
+        }
+        return subIngredients;
     }
 
     // Clean the extracted ingredient
