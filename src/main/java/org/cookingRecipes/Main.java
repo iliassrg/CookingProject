@@ -11,9 +11,9 @@ public class Main {
         ingredient.loadFromFile(file);
         ingredient.displayIngredients();
 
-        Kitchenware kitchenware = new Kitchenware();
-        kitchenware.loadFromFile(file);
-        kitchenware.displayKitchenware();
+        Utensils utensils = new Utensils();
+        utensils.loadFromFile(file);
+        utensils.displayUtensils();
 
         Time time = new Time();
         time.loadFromFile(file);
@@ -26,9 +26,9 @@ public class Main {
         ingredient2.loadFromFile(file2);
         ingredient2.displayIngredients();
 
-        Kitchenware kitchenware2 = new Kitchenware();
-        kitchenware2.loadFromFile(file2);
-        kitchenware2.displayKitchenware();
+        Utensils utensils2 = new Utensils();
+        utensils2.loadFromFile(file2);
+        utensils2.displayUtensils();
 
         Time time2 = new Time();
         time2.loadFromFile(file2);

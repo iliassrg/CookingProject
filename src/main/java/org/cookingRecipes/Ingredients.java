@@ -54,8 +54,8 @@ public class Ingredients {
         List<String> subIngredients = new ArrayList<>();
         for (Integer i : position) {
             int beginIndex = i + 1;
-            int endIndex = line.indexOf("{", beginIndex);
-            if (endIndex == -1) return null; // Guard against missing '{'
+            int endIndex = line.indexOf("}", beginIndex);
+            if (endIndex == -1) return null; // Guard against missing '}'
             String ingredient = line.substring(beginIndex, endIndex);
             ingredient = cleanIngredient(ingredient);
             subIngredients.add(ingredient);
@@ -72,6 +72,8 @@ public class Ingredients {
         if (ingredient.endsWith(".") || ingredient.endsWith(",")) {
             ingredient = ingredient.substring(0, ingredient.length() - 1);
         }
+        ingredient = ingredient.replace("{"," ");
+        ingredient = ingredient.replace("%", " ");
         return ingredient;
     }
 
