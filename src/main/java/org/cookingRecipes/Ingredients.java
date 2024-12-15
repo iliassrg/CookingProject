@@ -44,9 +44,7 @@ public class Ingredients {
             }
         }
         List<String> subIngredients = extractIngredient(line, position);
-        if (subIngredients != null) {
-            addIngredient(subIngredients);
-        }
+        addIngredient(subIngredients);
     }
 
     // Extract the ingredient from the input line
@@ -55,7 +53,9 @@ public class Ingredients {
         for (Integer i : position) {
             int beginIndex = i + 1;
             int endIndex = line.indexOf("}", beginIndex);
-            if (endIndex == -1) return null; // Guard against missing '}'
+            if (endIndex == -1) {
+                endIndex = line.indexOf(" ", beginIndex);
+            }
             String ingredient = line.substring(beginIndex, endIndex);
             ingredient = cleanIngredient(ingredient);
             subIngredients.add(ingredient);

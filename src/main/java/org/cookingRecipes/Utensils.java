@@ -44,9 +44,7 @@ public class Utensils {
             }
         }
         List<String> subUtensils = extractUtensil(line, position);
-        if (subUtensils != null) {
-            addUtensil(subUtensils);
-        }
+        addUtensil(subUtensils);
     }
 
     // Extract the tag line from the input
@@ -55,7 +53,9 @@ public class Utensils {
         for(Integer i : position){
             int beginIndex = i + 1;
             int endIndex = line.indexOf("}", beginIndex);
-            if (endIndex == -1) return null; // Guard against missing '}'
+            if (endIndex == -1) {
+                endIndex = line.indexOf(" ", beginIndex);
+            }
             String utensil = line.substring(beginIndex, endIndex);
             utensil = cleanUtensil(utensil);
             subUtensils.add(utensil);
