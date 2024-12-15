@@ -30,6 +30,8 @@ public class Utensils {
             while ((line = reader.readLine()) != null) {
                 processLine(line);
             }
+        } catch (FileNotFoundException e) {
+            System.err.println("Wrong file name!");
         } catch (IOException e) {
             System.err.printf("Error: %s\n", e.getMessage());
         }

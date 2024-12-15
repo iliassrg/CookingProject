@@ -45,6 +45,8 @@ public class Time {
             while ((line = reader.readLine()) != null) {
                 processLine(line);
             }
+        } catch (FileNotFoundException e) {
+            System.err.println("Wrong file name!");
         } catch (IOException e) {
             System.err.printf("Error: %s\n", e.getMessage());
         }
@@ -87,7 +89,7 @@ public class Time {
 
     // Display total time
     public void displayTotalTime() {
-        System.out.println("\nΣυνολική ώρα:");
+        System.out.print("\nΣυνολική ώρα:\n\t");
         int sumOfHours = 0;
         int sumOfMinutes = 0;
         int sumOfSeconds = 0;
