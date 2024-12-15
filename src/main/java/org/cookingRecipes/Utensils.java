@@ -31,7 +31,7 @@ public class Utensils {
                 processLine(line);
             }
         } catch (FileNotFoundException e) {
-            System.err.println("Wrong file name!");
+            System.err.println("Wrong file name!"+file);
         } catch (IOException e) {
             System.err.printf("Error: %s\n", e.getMessage());
         }
