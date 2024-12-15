@@ -3,17 +3,12 @@ package org.cookingRecipes;
 import java.io.*;
 
 public class Main {
-    // Flag to track if the file-not-found message has been printed
-    private static boolean fileNotFoundMessagePrinted = false;
-
     public static void main(String[] args) {
         // Array of file names
         String[] fileNames = {"pancakes.cook", "french_fries.cook", "syrup.cook", "fakes.cook"};
         // Process each file
         for (String fileName : fileNames) {
-            if(!fileNotFoundMessagePrinted) {
-                processFile(new File(fileName));
-            }
+            processFile(new File(fileName));
         }
     }
 
@@ -56,11 +51,7 @@ public class Main {
                 }
             }
         } catch (FileNotFoundException e) {
-            // Print the error message only if it has not been printed yet
-            if (!fileNotFoundMessagePrinted) {
-                System.err.println("Wrong file name!"+file);
-                fileNotFoundMessagePrinted = true; // Set the flag to true
-            }
+            System.err.println("Wrong file name!"+file);
         } catch (IOException e) {
             System.err.printf("Error: %s\n", e.getMessage());
         }
