@@ -55,14 +55,34 @@ public class Ingredients {
         for (Integer i : position) {
             int beginIndex = i + 1;
             int endIndex = line.indexOf("}", beginIndex);
-            if (endIndex == -1) {
-                endIndex = line.indexOf(" ", beginIndex);
+            if(endIndex == -1){
+                endIndex = findEndIndex(line, beginIndex);
             }
-            String ingredient = line.substring(beginIndex, endIndex);
-            ingredient = cleanIngredient(ingredient);
-            subIngredients.add(ingredient);
+
+            String ingredient = (endIndex == -1)
+                    ? line.substring(beginIndex)
+                    : line.substring(beginIndex, endIndex);
+
+            subIngredients.add(cleanIngredient(ingredient));
         }
         return subIngredients;
+    }
+
+    // Helper method to find the end index of an ingredient
+    private int findEndIndex(String line, int beginIndex) {
+        int[] possibleEndIndices = {
+                line.indexOf("}", beginIndex),
+                line.indexOf(" ", beginIndex),
+                line.indexOf(".", beginIndex),
+                line.indexOf(",", beginIndex)
+        };
+
+        for (int index : possibleEndIndices) {
+            if (index != -1) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     // Clean the extracted ingredient

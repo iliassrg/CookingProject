@@ -56,13 +56,32 @@ public class Utensils {
             int beginIndex = i + 1;
             int endIndex = line.indexOf("}", beginIndex);
             if (endIndex == -1) {
-                endIndex = line.indexOf(" ", beginIndex);
+                endIndex = findEndIndex(line, beginIndex);
             }
-            String utensil = line.substring(beginIndex, endIndex);
-            utensil = cleanUtensil(utensil);
-            subUtensils.add(utensil);
+            String utensil = (endIndex == -1)
+                    ? line.substring(beginIndex)
+                    : line.substring(beginIndex, endIndex);
+
+            subUtensils.add(cleanUtensil(utensil));
         }
         return subUtensils;
+    }
+
+    // Helper method to find the end index of an ingredient
+    private int findEndIndex(String line, int beginIndex) {
+        int[] possibleEndIndices = {
+                line.indexOf("}", beginIndex),
+                line.indexOf(" ", beginIndex),
+                line.indexOf(".", beginIndex),
+                line.indexOf(",", beginIndex)
+        };
+
+        for (int index : possibleEndIndices) {
+            if (index != -1) {
+                return index;
+            }
+        }
+        return -1;
     }
 
     // Clean the extracted tag line
