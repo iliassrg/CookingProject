@@ -58,9 +58,13 @@ public class Utensils {
             if (endIndex == -1) {
                 endIndex = findEndIndex(line, beginIndex);
             }
-            String utensil = (endIndex == -1)
-                    ? line.substring(beginIndex)
-                    : line.substring(beginIndex, endIndex);
+
+            String utensil;
+            if (endIndex == -1) {
+                utensil = line.substring(beginIndex);
+            } else {
+                utensil = line.substring(beginIndex, endIndex);
+            }
 
             subUtensils.add(cleanUtensil(utensil));
         }

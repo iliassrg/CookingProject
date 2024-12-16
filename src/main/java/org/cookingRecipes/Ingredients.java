@@ -59,9 +59,12 @@ public class Ingredients {
                 endIndex = findEndIndex(line, beginIndex);
             }
 
-            String ingredient = (endIndex == -1)
-                    ? line.substring(beginIndex)
-                    : line.substring(beginIndex, endIndex);
+            String ingredient;
+            if (endIndex == -1) {
+                ingredient = line.substring(beginIndex);
+            } else {
+                ingredient = line.substring(beginIndex, endIndex);
+            }
 
             subIngredients.add(cleanIngredient(ingredient));
         }
