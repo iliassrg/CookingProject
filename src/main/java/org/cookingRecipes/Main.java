@@ -7,21 +7,25 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        String[] fileNames = {"pancakes.cook", "french_fries.cook", "syrup.cook", "fakes.cook"};
-        boolean fileExists = true;
+        // Έλεγχος αν υπάρχουν ορίσματα για το αρχείο συνταγών
+        if (args.length == 0) {
+            System.err.println("Πρέπει να δώσετε τουλάχιστον ένα αρχείο συνταγής.");
+            return; // Σταματάει την εκτέλεση αν δεν δίνονται αρχεία
+        }
+
         List<String> ingredientsList = new ArrayList<>();
-        for (String fileName : fileNames) {
-            fileExists = true;
+
+        // Επεξεργασία όλων των ορισμάτων (δηλαδή, όλων των αρχείων συνταγών)
+        for (String fileName : args) {
             File file = new File(fileName);
 
-            // Έλεγχουμε αν το αρχείο υπάρχει πριν προχωρήσουμε
+            // Έλεγχος αν το αρχείο υπάρχει πριν προχωρήσουμε
             if (!file.exists()) {
-                System.err.println("Wrong file name: " + fileName);
-                fileExists = false;
-                continue; // Συνεχίζουμε στο επόμενο αρχείο
+                System.err.println("Λάθος όνομα αρχείου: " + fileName);
+                continue; // Παραλείπει το τρέχον αρχείο και προχωράει στο επόμενο
             }
 
-            System.out.println("\nΣυνταγή για " + fileName.substring(0,fileName.indexOf(".")));
+            System.out.println("\nΣυνταγή για " + fileName.substring(0, fileName.indexOf(".")));
 
             // Χρήση πολυμορφισμού
             Recipe[] recipes = {new Ingredients(), new Utensils(), new Time()};
@@ -37,12 +41,10 @@ public class Main {
             displaySteps(file);
         }
 
-        //Αν υπάρχουν τα αρχεία, τότε εκτυπώνονται όλα τα υλικά από κάθε αρχείο συνταγής.
-        if(fileExists) {
-            System.out.println("\nΛίστα αγορών:");
-            for (String item : ingredientsList) {
-                System.out.println(" - " + item);
-            }
+        // Εκτύπωση της λίστας αγορών
+        System.out.println("\nΛίστα αγορών:");
+        for (String item : ingredientsList) {
+            System.out.println(" - " + item);
         }
     }
 
@@ -52,23 +54,23 @@ public class Main {
             boolean newStep = true; // Παρακολουθεί αν βρισκόμαστε σε νέο βήμα
             String line;
 
-            System.out.println("\nΒήματα:");
+            System.out.println("\nΒήματα:"); // Εκτύπωση κεφαλίδας "Βήματα"
             while ((line = reader.readLine()) != null) {
                 if (line.trim().isEmpty()) { // Αν η γραμμή είναι κενή, προχωράμε στο επόμενο βήμα
                     stepCounter++;
                     newStep = true; // Σηματοδοτεί την αρχή ενός νέου βήματος
-                    System.out.println();
+                    System.out.println(); // Εκτυπώνει μια κενή γραμμή για καλύτερη μορφοποίηση
                 } else {
                     if (newStep) { // Εκτύπωση αριθμού βήματος για το νέο βήμα
                         System.out.println("\t" + stepCounter + ". " + line);
                         newStep = false;
                     } else {
-                        System.out.println("\t   " + line); // Εκτύπωση επιπλέον γραμμών αν υπάρχουν για 1 βήμα
+                        System.out.println("\t   " + line); // Εκτύπωση επιπλέον γραμμών με εσοχή
                     }
                 }
             }
         } catch (IOException e) {
-            System.err.printf("Error: %s\n", e.getMessage());
+            System.err.printf("Σφάλμα: %s\n", e.getMessage());
         }
     }
 }
