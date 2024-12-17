@@ -16,6 +16,7 @@ public class Ingredients extends Recipe {
 
     public void addIngredient(List<String> ingredient) {
         if (ingredient != null && !ingredient.isEmpty()) {
+            //Προσθέτουμε στη λίστα τις λίστες με τα υλικά από τη κάθε γραμμή που υπάρχουν
             ingredients.addAll(ingredient);
         }
     }
@@ -28,11 +29,12 @@ public class Ingredients extends Recipe {
                 position.add(i);
             }
         }
+        // Δημιουργία λίστας subIngredients για την εισαγωγή υλικών από κάθε γραμμή.
         List<String> subIngredients = extractIngredient(line, position);
         addIngredient(subIngredients);
     }
 
-    // Extract the ingredient from the input line
+    // Δημιουργία υλικών από τη γραμμή στην οποία βρισκόμαστε.
     private List<String> extractIngredient(String line, List<Integer> position) {
         List<String> subIngredients = new ArrayList<>();
         for (Integer i : position) {
@@ -58,7 +60,8 @@ public class Ingredients extends Recipe {
         return subIngredients;
     }
 
-    // Helper method to find the end index of an ingredient
+    // Βοηθητική μέθοδος για να βρούμε το δείκτη που δείχνει στο τέλος ενός υλικού
+    // Στην περίπτωση αυτή το υλικό είναι 1 λέξη, αλλά μπορεί να τελειώνει με '.', ',' ή ' '.
     private int findEndIndex(String line, int beginIndex) {
         int[] possibleEndIndices = {
                 line.indexOf(" ", beginIndex),
@@ -76,7 +79,7 @@ public class Ingredients extends Recipe {
 
     private String cleanIngredient(String ingredient) {
         if (ingredient.contains("@") || ingredient.contains("#") || ingredient.contains("~")) {
-            //Στην περίπτωση που το υλικό είναι μία λέξη και προφανώς δεν έχει ποσότητα
+            //Στην περίπτωση που το υλικό είναι μία λέξη και δεν έχει ποσότητα
             String[] words = ingredient.split(" ");
             ingredient = words[0];
         }

@@ -3,7 +3,8 @@ package org.cookingRecipes;
 import java.io.*;
 
 public abstract class Recipe {
-    // Load data from file
+
+    // Φόρτωση δεδομένων από αρχείο
     public void loadFromFile(File file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -17,9 +18,7 @@ public abstract class Recipe {
         }
     }
 
-    // Abstract method to process a line (implemented in subclasses)
     protected abstract void processLine(String line);
 
-    // Abstract method to display content (implemented in subclasses)
     public abstract void display();
 }

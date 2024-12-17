@@ -16,6 +16,7 @@ public class Utensils extends Recipe {
 
     public void addUtensil(List<String> utensil) {
         if (utensil != null && !utensil.isEmpty()) {
+            //Προσθέτουμε στη λίστα τις λίστες με τα σκεύη από τη κάθε γραμμή που υπάρχουν
             utensils.addAll(utensil);
         }
     }
@@ -28,22 +29,27 @@ public class Utensils extends Recipe {
                 position.add(i);
             }
         }
+        // Δημιουργία λίστας subUtensils για την εισαγωγή σκευών από κάθε γραμμή.
         List<String> subUtensils = extractUtensil(line, position);
         addUtensil(subUtensils);
     }
 
-    // Extract the tag line from the input
+    // Δημιουργία σκευών από τη γραμμή στην οποία βρισκόμαστε.
     private List<String> extractUtensil(String line, List<Integer> position) {
         List<String> subUtensils = new ArrayList<>();
         for(Integer i : position){
+            //Όπου i το σημείο στο οποίο παρουσιάζεται ο χαρακτήρας '#'.
             int beginIndex = i + 1;
             int endIndex = line.indexOf("}", beginIndex);
             if (endIndex == -1) {
+                //Στην περίπτωση αυτή, το σκεύος είναι μόνο μία λέξη.
                 endIndex = findEndIndex(line, beginIndex);
             }
 
             String utensil;
             if (endIndex == -1) {
+                //Στην περίπτωση αυτή, το σκεύος είναι μόνο μία λέξη
+                //και βρίσκεται στο τέλος της γραμμής.
                 utensil = line.substring(beginIndex);
             } else {
                 utensil = line.substring(beginIndex, endIndex);
@@ -54,7 +60,8 @@ public class Utensils extends Recipe {
         return subUtensils;
     }
 
-    // Helper method to find the end index of an ingredient
+    // Βοηθητική μέθοδος για να βρούμε το δείκτη που δείχνει στο τέλος ενός σκεύους
+    // Στην περίπτωση αυτή το σκεύος είναι 1 λέξη, αλλά μπορεί να τελειώνει με '.', ',' ή ' '.
     private int findEndIndex(String line, int beginIndex) {
         int[] possibleEndIndices = {
                 line.indexOf("}", beginIndex),
@@ -74,6 +81,7 @@ public class Utensils extends Recipe {
     // Clean the extracted tag line
     private String cleanUtensil(String utensil) {
         if (utensil.contains("@") || utensil.contains("#") || utensil.contains("~")) {
+            //Στην περίπτωση που το σκεύος είναι μία λέξη
             String[] words = utensil.split(" ");
             utensil = words[0];
         }

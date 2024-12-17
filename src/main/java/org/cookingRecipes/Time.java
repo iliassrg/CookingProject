@@ -26,7 +26,7 @@ public class Time extends Recipe {
     public void display() {
         System.out.println("\nΣυνολική ώρα:");
 
-        boolean isFirst = true; // To manage commas between values
+        boolean isFirst = true; //Μεταβλητή για την εισαγωγή κομμάτων
 
         System.out.print("\t");
 
@@ -48,7 +48,7 @@ public class Time extends Recipe {
             System.out.print("0 seconds");
         }
 
-        System.out.println(); // Move to the next line after printing
+        System.out.println();
     }
 
 }

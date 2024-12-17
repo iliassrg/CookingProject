@@ -37,6 +37,7 @@ public class Main {
             displaySteps(file);
         }
 
+        //Αν υπάρχουν τα αρχεία, τότε εκτυπώνονται όλα τα υλικά από κάθε αρχείο συνταγής.
         if(fileExists) {
             System.out.println("\nΛίστα αγορών:");
             for (String item : ingredientsList) {
