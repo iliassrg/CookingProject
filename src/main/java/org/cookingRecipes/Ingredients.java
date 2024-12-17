@@ -53,14 +53,18 @@ public class Ingredients {
     private List<String> extractIngredient(String line, List<Integer> position) {
         List<String> subIngredients = new ArrayList<>();
         for (Integer i : position) {
+            //Όπου i το σημείο στο οποίο παρουσιάζεται ο χαρακτήρας '@'.
             int beginIndex = i + 1;
             int endIndex = line.indexOf("}", beginIndex);
             if(endIndex == -1){
+                //Στην περίπτωση αυτή, το υλικό είναι μόνο μία λέξη χωρίς ποσότητα.
                 endIndex = findEndIndex(line, beginIndex);
             }
 
             String ingredient;
             if (endIndex == -1) {
+                //Στην περίπτωση αυτή, το υλικό είναι μόνο μία λέξη χωρίς ποσότητα
+                //και βρίσκεται στο τέλος της γραμμής.
                 ingredient = line.substring(beginIndex);
             } else {
                 ingredient = line.substring(beginIndex, endIndex);
@@ -74,7 +78,6 @@ public class Ingredients {
     // Helper method to find the end index of an ingredient
     private int findEndIndex(String line, int beginIndex) {
         int[] possibleEndIndices = {
-                line.indexOf("}", beginIndex),
                 line.indexOf(" ", beginIndex),
                 line.indexOf(".", beginIndex),
                 line.indexOf(",", beginIndex)
@@ -91,6 +94,7 @@ public class Ingredients {
     // Clean the extracted ingredient
     private String cleanIngredient(String ingredient) {
         if (ingredient.contains("@") || ingredient.contains("#") || ingredient.contains("~")) {
+            //Στην περίπτωση που το υλικό είναι μία λέξη και προφανώς δεν έχει ποσότητα
             String[] words = ingredient.split(" ");
             ingredient = words[0];
         }

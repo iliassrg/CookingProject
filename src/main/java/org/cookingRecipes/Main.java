@@ -13,19 +13,19 @@ public class Main {
     }
 
     private static void processFile(File file) {
-            Ingredients ingredients = new Ingredients();
-            ingredients.loadFromFile(file);
-            ingredients.displayIngredients();
+        Ingredients ingredients = new Ingredients();
+        ingredients.loadFromFile(file);
+        ingredients.displayIngredients();
 
-            Utensils utensils = new Utensils();
-            utensils.loadFromFile(file);
-            utensils.displayUtensils();
+        Utensils utensils = new Utensils();
+        utensils.loadFromFile(file);
+        utensils.displayUtensils();
 
-            Time time = new Time();
-            time.loadFromFile(file);
-            time.displayTotalTime();
+        Time time = new Time();
+        time.loadFromFile(file);
+        time.displayTotalTime();
 
-            displaySteps(file);
+        displaySteps(file);
     }
 
     private static void displaySteps(File file) {
