@@ -1,47 +1,30 @@
 package org.cookingRecipes;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utensils {
+public class Utensils extends Recipe {
     private List<String> utensils;
-    // Constructor
+
     public Utensils() {
         this.utensils = new ArrayList<>();
     }
 
-    // Getter
     public List<String> getUtensils() {
-        return new ArrayList<>(utensils); // Return a copy to preserve encapsulation
+        return new ArrayList<>(utensils);
     }
 
-    // Add utensil
     public void addUtensil(List<String> utensil) {
         if (utensil != null && !utensil.isEmpty()) {
             utensils.addAll(utensil);
         }
     }
 
-    // Load kitchenware from a file
-    public void loadFromFile(File file) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                processLine(line);
-            }
-        } catch (FileNotFoundException e) {
-            System.err.println("Wrong file name!"+file);
-        } catch (IOException e) {
-            System.err.printf("Error: %s\n", e.getMessage());
-        }
-    }
-
-    // Process a single line to extract utensils
-    private void processLine(String line) {
+    @Override
+    protected void processLine(String line) {
         List<Integer> position = new ArrayList<>();
-        for(int i = 0 ; i < line.length(); i++){
-            if(line.charAt(i) == '#'){
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == '#') {
                 position.add(i);
             }
         }
@@ -101,11 +84,11 @@ public class Utensils {
         return utensil;
     }
 
-    // Display kitchenware items
-    public void displayUtensils() {
+    @Override
+    public void display() {
         System.out.println("\nΣκεύη:");
-        for (String item : utensils) {
-            System.out.printf("\t%s\n", item);
+        for (String utensil : utensils) {
+            System.out.println("\t" + utensil);
         }
     }
 }

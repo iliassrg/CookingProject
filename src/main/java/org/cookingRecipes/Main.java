@@ -1,74 +1,71 @@
 package org.cookingRecipes;
 
+import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.*;
 
 public class Main {
     public static void main(String[] args) {
         String[] fileNames = {"pancakes.cook", "french_fries.cook", "syrup.cook", "fakes.cook"};
-
+        boolean fileExists = true;
         List<String> ingredientsList = new ArrayList<>();
-
-        // Process each file and populate ingredientsList
         for (String fileName : fileNames) {
-            processFile(new File(fileName), ingredientsList);
+            fileExists = true;
+            File file = new File(fileName);
+
+            // Έλεγχουμε αν το αρχείο υπάρχει πριν προχωρήσουμε
+            if (!file.exists()) {
+                System.err.println("Wrong file name: " + fileName);
+                fileExists = false;
+                continue; // Συνεχίζουμε στο επόμενο αρχείο
+            }
+
+            System.out.println("\nΣυνταγή για " + fileName.substring(0,fileName.indexOf(".")));
+
+            // Χρήση πολυμορφισμού
+            Recipe[] recipes = {new Ingredients(), new Utensils(), new Time()};
+            for (Recipe recipe : recipes) {
+                recipe.loadFromFile(file);
+                recipe.display();
+
+                // Ειδική διαχείριση για τα υλικά (Ingredients)
+                if (recipe instanceof Ingredients) {
+                    ingredientsList.addAll(((Ingredients) recipe).getIngredients());
+                }
+            }
+            displaySteps(file);
         }
 
-        // Add all items from ingredientsList to shoppingList
-        List<String> shoppingList = new ArrayList<>(ingredientsList);
-
-        // Print the shopping list
-        System.out.println("\nShopping List:");
-        for (String item : shoppingList) {
-            System.out.println(" - " + item);
+        if(fileExists) {
+            System.out.println("\nΛίστα αγορών:");
+            for (String item : ingredientsList) {
+                System.out.println(" - " + item);
+            }
         }
-    }
-
-
-    private static void processFile(File file, List<String> ingredientsList) {
-        Ingredients ingredients = new Ingredients();
-        ingredients.loadFromFile(file);
-        ingredients.displayIngredients();
-
-        // Add all ingredients from the file into the main ingredientsList
-        ingredientsList.addAll(ingredients.getIngredients());
-
-        Utensils utensils = new Utensils();
-        utensils.loadFromFile(file);
-        utensils.displayUtensils();
-
-        Time time = new Time();
-        time.loadFromFile(file);
-        time.displayTotalTime();
-
-        displaySteps(file);
     }
 
     private static void displaySteps(File file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            int counter = 1;
-            boolean changedLine = true;
+            int stepCounter = 1; // Ο μετρητής βημάτων ξεκινά από το 1
+            boolean newStep = true; // Παρακολουθεί αν βρισκόμαστε σε νέο βήμα
             String line;
+
             System.out.println("\nΒήματα:");
             while ((line = reader.readLine()) != null) {
-                if(line.isEmpty()){
-                    counter++;
-                    changedLine = true;
+                if (line.trim().isEmpty()) { // Αν η γραμμή είναι κενή, προχωράμε στο επόμενο βήμα
+                    stepCounter++;
+                    newStep = true; // Σηματοδοτεί την αρχή ενός νέου βήματος
                     System.out.println();
-                }
-                else{
-                    if(changedLine){
-                        System.out.println("\t" + counter + ". " + line);
-                        changedLine = false;
-                    }
-                    else{
-                        System.out.println("\t   "+line);
+                } else {
+                    if (newStep) { // Εκτύπωση αριθμού βήματος για το νέο βήμα
+                        System.out.println("\t" + stepCounter + ". " + line);
+                        newStep = false;
+                    } else {
+                        System.out.println("\t   " + line); // Εκτύπωση επιπλέον γραμμών αν υπάρχουν για 1 βήμα
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Wrong file name!"+file);
         } catch (IOException e) {
             System.err.printf("Error: %s\n", e.getMessage());
         }
