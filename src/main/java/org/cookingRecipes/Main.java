@@ -1,21 +1,38 @@
 package org.cookingRecipes;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.io.*;
 
 public class Main {
     public static void main(String[] args) {
-        // Array of file names
         String[] fileNames = {"pancakes.cook", "french_fries.cook", "syrup.cook", "fakes.cook"};
-        // Process each file
+
+        List<String> ingredientsList = new ArrayList<>();
+
+        // Process each file and populate ingredientsList
         for (String fileName : fileNames) {
-            processFile(new File(fileName));
+            processFile(new File(fileName), ingredientsList);
+        }
+
+        // Add all items from ingredientsList to shoppingList
+        List<String> shoppingList = new ArrayList<>(ingredientsList);
+
+        // Print the shopping list
+        System.out.println("\nShopping List:");
+        for (String item : shoppingList) {
+            System.out.println(" - " + item);
         }
     }
 
-    private static void processFile(File file) {
+
+    private static void processFile(File file, List<String> ingredientsList) {
         Ingredients ingredients = new Ingredients();
         ingredients.loadFromFile(file);
         ingredients.displayIngredients();
+
+        // Add all ingredients from the file into the main ingredientsList
+        ingredientsList.addAll(ingredients.getIngredients());
 
         Utensils utensils = new Utensils();
         utensils.loadFromFile(file);
