@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeApp extends JFrame {
-    private JList<String> recipeList;
-    private DefaultListModel<String> listModel;
-    private JTextArea displayArea;
-    private JButton viewButton, shoppingListButton, executeButton;
-    private List<File> recipeFiles;
-    private List<String> ingredientsList;
+    private JList<String> recipeList; // Λίστα με τις συνταγές
+    private DefaultListModel<String> listModel; // Μοντέλο για τη λίστα
+    private JTextArea displayArea; // Περιοχή εμφάνισης κειμένου
+    private JButton viewRecipeButton, shoppingListButton, executeRecipeButton; // Κουμπιά
+    private List<File> recipeFiles; // Λίστα με τα αρχεία συνταγών
+    private List<String> shoppingList; // Λίστα για τα υλικά
 
     public RecipeApp() {
         super("Recipe Application");
@@ -30,7 +30,7 @@ public class RecipeApp extends JFrame {
         // Χρώμα φόντου
         getContentPane().setBackground(new Color(245, 245, 245));
 
-        // Λίστα συνταγών
+        // Δημιουργία και εμφάνιση λίστας συνταγών
         listModel = new DefaultListModel<>();
         recipeList = new JList<>(listModel);
         recipeList.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -41,7 +41,7 @@ public class RecipeApp extends JFrame {
         listScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(listScrollPane, BorderLayout.WEST);
 
-        // Περιοχή εμφάνισης κειμένου
+        // Περιοχή εμφάνισης κειμένου (π.χ. συνταγή, λίστα αγορών)
         displayArea = new JTextArea();
         displayArea.setFont(new Font("Arial", Font.PLAIN, 14));
         displayArea.setEditable(false);
@@ -52,27 +52,27 @@ public class RecipeApp extends JFrame {
         textScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(textScrollPane, BorderLayout.CENTER);
 
-        // Πάνελ με κουμπιά
+        // Πάνελ με κουμπιά για διάφορες ενέργειες
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setBackground(new Color(245, 245, 245));
 
-        viewButton = createStyledButton("View Recipe", new Color(100, 150, 255));
+        viewRecipeButton = createStyledButton("View Recipe", new Color(100, 150, 255));
         shoppingListButton = createStyledButton("Shopping List", new Color(100, 200, 150));
-        executeButton = createStyledButton("Execute Recipe", new Color(255, 100, 100));
+        executeRecipeButton = createStyledButton("Execute Recipe", new Color(255, 100, 100));
 
-        buttonPanel.add(viewButton);
+        buttonPanel.add(viewRecipeButton);
         buttonPanel.add(shoppingListButton);
-        buttonPanel.add(executeButton);
+        buttonPanel.add(executeRecipeButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
         // Αρχικοποίηση λιστών
         recipeFiles = new ArrayList<>();
-        ingredientsList = new ArrayList<>();
+        shoppingList = new ArrayList<>();
 
         // Προσθήκη listeners στα κουμπιά
-        viewButton.addActionListener(e -> viewRecipe());
+        viewRecipeButton.addActionListener(e -> viewRecipe());
         shoppingListButton.addActionListener(e -> showShoppingList());
-        executeButton.addActionListener(e -> executeRecipe());
+        executeRecipeButton.addActionListener(e -> executeRecipe());
 
         // Δημιουργία μενού
         JMenuBar menuBar = new JMenuBar();
@@ -97,7 +97,7 @@ public class RecipeApp extends JFrame {
         return button;
     }
 
-    // Άνοιγμα αρχείων συνταγών
+    // Άνοιγμα αρχείων συνταγών και προσθήκη τους στη λίστα
     private void openRecipe() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setMultiSelectionEnabled(true);
@@ -108,16 +108,25 @@ public class RecipeApp extends JFrame {
                 recipeFiles.add(file);
                 listModel.addElement(file.getName());
             }
+
+            // Εμφάνιση ειδοποίησης με οδηγίες
+            JOptionPane.showMessageDialog(this,
+                    "File(s) loaded successfully!\n" +
+                            "1. Click on the file(s) you loaded on the top-left.\n" +
+                            "2. Then click 'View Recipe', 'Shopping List', or 'Execute Recipe'.",
+                    "Files Loaded",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
-    // Προβολή συνταγής
+    // Προβολή της συνταγής
     private void viewRecipe() {
         int selectedIndex = recipeList.getSelectedIndex();
         if (selectedIndex != -1) {
             File file = recipeFiles.get(selectedIndex);
-            displayArea.setText("");  // Καθαρίζουμε την περιοχή κειμένου
+            displayArea.setText("");  // Καθαρίζουμε την περιοχή κειμένου πριν την εμφάνιση
 
+            // Φόρτωση και εμφάνιση των πληροφοριών της συνταγής
             Recipe[] recipes = {new Ingredients(), new Utensils(), new Time()};
             for (Recipe recipe : recipes) {
                 if (recipe instanceof Ingredients) {
@@ -128,43 +137,43 @@ public class RecipeApp extends JFrame {
                     ((Time) recipe).setDisplayArea(displayArea);
                 }
                 recipe.loadFromFile(file);
-                recipe.display();
+                recipe.display(); // Εμφάνιση των στοιχείων της συνταγής
             }
         }
     }
 
-    // Εμφάνιση λίστας αγορών
+    // Εμφάνιση λίστας αγορών με τα υλικά όλων των συνταγών
     private void showShoppingList() {
-        ingredientsList.clear();
+        shoppingList.clear(); // Καθαρισμός της λίστας πριν την εμφάνιση
         for (File file : recipeFiles) {
             Recipe[] recipes = {new Ingredients()};
             for (Recipe recipe : recipes) {
                 recipe.loadFromFile(file);
                 if (recipe instanceof Ingredients) {
-                    ingredientsList.addAll(((Ingredients) recipe).getIngredients());
+                    shoppingList.addAll(((Ingredients) recipe).getIngredients()); // Προσθήκη των υλικών
                 }
             }
         }
         displayArea.setText("Shopping List:\n");
-        for (String item : ingredientsList) {
+        for (String item : shoppingList) {
             displayArea.append(" - " + item + "\n");
         }
     }
 
-    // Εκτέλεση συνταγής (βήματα και αντίστροφη μέτρηση)
+    // Εκτέλεση της συνταγής βήμα προς βήμα
     private void executeRecipe() {
         int selectedIndex = recipeList.getSelectedIndex();
         if (selectedIndex != -1) {
             File file = recipeFiles.get(selectedIndex);
-            displaySteps(file);
+            displaySteps(file); // Εμφάνιση των βημάτων εκτέλεσης της συνταγής
         }
     }
 
-    // Εμφάνιση βημάτων και διαχείριση αντίστροφης μέτρησης
+    // Εμφάνιση των βημάτων εκτέλεσης και διαχείριση αντίστροφης μέτρησης
     private void displaySteps(File file) {
         new Thread(() -> {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                displayArea.setText("");  // Καθαρίζει το περιεχόμενο πριν εμφανιστούν τα βήματα
+                displayArea.setText("");  // Καθαρίζει την περιοχή κειμένου πριν εμφανιστούν τα βήματα
 
                 int stepCounter = 1;
                 String line;
@@ -212,7 +221,7 @@ public class RecipeApp extends JFrame {
         }).start();
     }
 
-    // Βοηθητική μέθοδος για την εμφάνιση του βήματος και τη διαχείριση της χρονομέτρησης
+    // Εμφάνιση βήματος και διαχείριση της αντίστροφης μέτρησης
     private void displayStep(int stepCounter, String stepContent) {
         displayArea.append("\nStep " + stepCounter + ":\n");
         displayArea.append(stepContent);
