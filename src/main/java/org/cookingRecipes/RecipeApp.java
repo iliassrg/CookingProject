@@ -164,77 +164,105 @@ public class RecipeApp extends JFrame {
     private void displaySteps(File file) {
         new Thread(() -> {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                displayArea.setText("");  // Καθαρίζει το περιεχόμενο πριν εμφανιστούν τα βήματα
+
                 int stepCounter = 1;
                 String line;
-                boolean newStep = true; // Για τον εντοπισμό νέων βημάτων
+                StringBuilder stepContent = new StringBuilder();  // Για την αποθήκευση του περιεχομένου του βήματος
 
                 while ((line = reader.readLine()) != null) {
                     line = line.trim(); // Αφαιρούμε τυχόν κενά
+
                     if (line.isEmpty()) {
-                        newStep = true; // Ενεργοποιούμε τη σημαία για νέο βήμα
-                        continue; // Αγνοούμε την κενή γραμμή
-                    }
+                        // Εμφάνιση του βήματος και ζήτηση επιβεβαίωσης
+                        displayStep(stepCounter, stepContent.toString());
 
-                    // Αν βρέθηκε κενή γραμμή πριν, αύξησε το μετρητή και ξεκίνησε νέο βήμα
-                    if (newStep) {
-                        displayArea.append("\nStep " + stepCounter + ":\n");
-                        stepCounter++;
-                        newStep = false; // Απενεργοποιούμε τη σημαία μέχρι την επόμενη κενή γραμμή
-                    }
-
-                    // Εμφάνιση περιεχομένου του βήματος
-                    displayArea.append("   " + line + "\n");
-                    displayArea.setCaretPosition(displayArea.getDocument().getLength());  // Αυτόματο scroll
-
-                    // Έλεγχος για χρόνο στο βήμα
-                    if (line.contains("~")) {
-                        int beginIndex = line.indexOf("{") + 1;
-                        int endIndex = line.indexOf("}", beginIndex);
-                        String timeSegment = line.substring(beginIndex, endIndex);
-
-                        long seconds = 0;
-                        if (timeSegment.contains("hours")) {
-                            seconds += Integer.parseInt(timeSegment.replace("%hours", "").trim()) * 3600;
-                        }
-                        if (timeSegment.contains("minutes")) {
-                            seconds += Integer.parseInt(timeSegment.replace("%minutes", "").trim()) * 60;
-                        }
-                        if (timeSegment.contains("seconds")) {
-                            seconds += Integer.parseInt(timeSegment.replace("%seconds", "").trim());
-                        }
-
-                        // Δημιουργία αντίστροφης μέτρησης
-                        Countdown countdown = CountdownFactory.countdown(seconds);
-                        countdown.addNotifier(new Notifier() {
-                            @Override
-                            public void finished(Countdown c) {
-                                displayArea.append("Time's up! Please confirm to proceed to the next step.\n");
-                                displayArea.setCaretPosition(displayArea.getDocument().getLength());  // Αυτόματο scroll
-                            }
-                        });
-
-                        // Εμφάνιση αντίστροφης μέτρησης
-                        countdown.start();
-                        while (countdown.secondsRemaining() > 0) {
-                            displayArea.append("Time remaining: " + countdown.secondsRemaining() + " seconds\n");
+                        // Ζητάμε από τον χρήστη να επιβεβαιώσει πριν προχωρήσει
+                        int confirm = JOptionPane.showConfirmDialog(this, "Have you completed this step?", "Confirm Step", JOptionPane.YES_NO_OPTION);
+                        if (confirm != JOptionPane.YES_OPTION) {
+                            displayArea.append("Execution stopped by user.\n");
                             displayArea.setCaretPosition(displayArea.getDocument().getLength());  // Αυτόματο scroll
-                            Thread.sleep(1000);
+                            return;
                         }
-                    }
 
-                    // Ζητάμε από τον χρήστη να επιβεβαιώσει πριν προχωρήσει
+                        // Εκκαθάριση του περιεχομένου για το επόμενο βήμα
+                        stepContent.setLength(0);
+                        stepCounter++;
+                    } else {
+                        // Προσθήκη της γραμμής στο περιεχόμενο του βήματος
+                        stepContent.append("   ").append(line).append("\n");
+                    }
+                }
+
+                // Εμφάνιση του τελευταίου βήματος αν δεν τελειώνει με κενή γραμμή
+                if (stepContent.length() > 0) {
+                    displayStep(stepCounter, stepContent.toString());
+
+                    // Ζητάμε από τον χρήστη να επιβεβαιώσει πριν τελειώσει
                     int confirm = JOptionPane.showConfirmDialog(this, "Have you completed this step?", "Confirm Step", JOptionPane.YES_NO_OPTION);
                     if (confirm != JOptionPane.YES_OPTION) {
                         displayArea.append("Execution stopped by user.\n");
                         displayArea.setCaretPosition(displayArea.getDocument().getLength());  // Αυτόματο scroll
-                        return;
                     }
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 displayArea.append("Error: " + e.getMessage() + "\n");
                 displayArea.setCaretPosition(displayArea.getDocument().getLength());  // Αυτόματο scroll
             }
         }).start();
+    }
+
+    // Βοηθητική μέθοδος για την εμφάνιση του βήματος και τη διαχείριση της χρονομέτρησης
+    private void displayStep(int stepCounter, String stepContent) {
+        displayArea.append("\nStep " + stepCounter + ":\n");
+        displayArea.append(stepContent);
+        displayArea.setCaretPosition(displayArea.getDocument().getLength());  // Αυτόματο scroll
+
+        // Έλεγχος για χρόνο στο βήμα
+        if (stepContent.contains("~")) {
+            String[] lines = stepContent.split("\n");
+            for (String line : lines) {
+                if (line.contains("~")) {
+                    int beginIndex = line.indexOf("{") + 1;
+                    int endIndex = line.indexOf("}", beginIndex);
+                    String timeSegment = line.substring(beginIndex, endIndex);
+
+                    long seconds = 0;
+                    if (timeSegment.contains("hours")) {
+                        seconds += Integer.parseInt(timeSegment.replace("%hours", "").trim()) * 3600;
+                    }
+                    if (timeSegment.contains("minutes")) {
+                        seconds += Integer.parseInt(timeSegment.replace("%minutes", "").trim()) * 60;
+                    }
+                    if (timeSegment.contains("seconds")) {
+                        seconds += Integer.parseInt(timeSegment.replace("%seconds", "").trim());
+                    }
+
+                    // Δημιουργία αντίστροφης μέτρησης
+                    Countdown countdown = CountdownFactory.countdown(seconds);
+                    countdown.addNotifier(new Notifier() {
+                        @Override
+                        public void finished(Countdown c) {
+                            displayArea.append("Time's up! Please confirm to proceed to the next step.\n");
+                            displayArea.setCaretPosition(displayArea.getDocument().getLength());  // Αυτόματο scroll
+                        }
+                    });
+
+                    // Εμφάνιση αντίστροφης μέτρησης
+                    countdown.start();
+                    while (countdown.secondsRemaining() > 0) {
+                        displayArea.append("Time remaining: " + countdown.secondsRemaining() + " seconds\n");
+                        displayArea.setCaretPosition(displayArea.getDocument().getLength());  // Αυτόματο scroll
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            displayArea.append("Error: " + e.getMessage() + "\n");
+                            displayArea.setCaretPosition(displayArea.getDocument().getLength());  // Αυτόματο scroll
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Εκκίνηση της εφαρμογής
