@@ -14,12 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeApp extends JFrame {
-    private JList<String> recipeList; // Λίστα με τις συνταγές
-    private DefaultListModel<String> listModel; // Μοντέλο για τη λίστα
-    private JTextArea displayArea; // Περιοχή εμφάνισης κειμένου
-    private JButton viewRecipeButton, shoppingListButton, executeRecipeButton; // Κουμπιά
-    private List<File> recipeFiles; // Λίστα με τα αρχεία συνταγών
-    private List<String> shoppingList; // Λίστα για τα υλικά
+    private JList<String> recipeList;
+    private DefaultListModel<String> listModel;
+    private JTextArea displayArea;
+    private JButton viewButton, shoppingListButton, executeButton;
+    private List<File> recipeFiles;
+    private List<String> shoppingList;
+
+    // Κοινή γραμματοσειρά για όλα τα στοιχεία
+    private final Font appFont = new Font("Arial", Font.PLAIN, 16);
 
     public RecipeApp() {
         super("Recipe Application");
@@ -30,10 +33,10 @@ public class RecipeApp extends JFrame {
         // Χρώμα φόντου
         getContentPane().setBackground(new Color(245, 245, 245));
 
-        // Δημιουργία και εμφάνιση λίστας συνταγών
+        // Λίστα συνταγών
         listModel = new DefaultListModel<>();
         recipeList = new JList<>(listModel);
-        recipeList.setFont(new Font("Arial", Font.PLAIN, 14));
+        recipeList.setFont(appFont);  // Εφαρμογή της κοινής γραμματοσειράς
         recipeList.setBackground(new Color(255, 255, 255));
         recipeList.setSelectionBackground(new Color(200, 220, 255));
         recipeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -41,9 +44,9 @@ public class RecipeApp extends JFrame {
         listScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(listScrollPane, BorderLayout.WEST);
 
-        // Περιοχή εμφάνισης κειμένου (π.χ. συνταγή, λίστα αγορών)
+        // Περιοχή εμφάνισης κειμένου
         displayArea = new JTextArea();
-        displayArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        displayArea.setFont(appFont);  // Εφαρμογή της κοινής γραμματοσειράς
         displayArea.setEditable(false);
         displayArea.setBackground(new Color(255, 255, 255));
         displayArea.setLineWrap(true);
@@ -52,17 +55,17 @@ public class RecipeApp extends JFrame {
         textScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(textScrollPane, BorderLayout.CENTER);
 
-        // Πάνελ με κουμπιά για διάφορες ενέργειες
+        // Πάνελ με κουμπιά
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setBackground(new Color(245, 245, 245));
 
-        viewRecipeButton = createStyledButton("View Recipe", new Color(100, 150, 255));
+        viewButton = createStyledButton("View Recipe", new Color(100, 150, 255));
         shoppingListButton = createStyledButton("Shopping List", new Color(100, 200, 150));
-        executeRecipeButton = createStyledButton("Execute Recipe", new Color(255, 100, 100));
+        executeButton = createStyledButton("Execute Recipe", new Color(255, 100, 100));
 
-        buttonPanel.add(viewRecipeButton);
+        buttonPanel.add(viewButton);
         buttonPanel.add(shoppingListButton);
-        buttonPanel.add(executeRecipeButton);
+        buttonPanel.add(executeButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
         // Αρχικοποίηση λιστών
@@ -70,16 +73,16 @@ public class RecipeApp extends JFrame {
         shoppingList = new ArrayList<>();
 
         // Προσθήκη listeners στα κουμπιά
-        viewRecipeButton.addActionListener(e -> viewRecipe());
+        viewButton.addActionListener(e -> viewRecipe());
         shoppingListButton.addActionListener(e -> showShoppingList());
-        executeRecipeButton.addActionListener(e -> executeRecipe());
+        executeButton.addActionListener(e -> executeRecipe());
 
         // Δημιουργία μενού
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
-        fileMenu.setFont(new Font("Arial", Font.PLAIN, 14));
+        fileMenu.setFont(appFont);  // Εφαρμογή της κοινής γραμματοσειράς
         JMenuItem openMenuItem = new JMenuItem("Open Recipe");
-        openMenuItem.setFont(new Font("Arial", Font.PLAIN, 14));
+        openMenuItem.setFont(appFont);  // Εφαρμογή της κοινής γραμματοσειράς
         openMenuItem.addActionListener(e -> openRecipe());
         fileMenu.add(openMenuItem);
         menuBar.add(fileMenu);
@@ -89,7 +92,7 @@ public class RecipeApp extends JFrame {
     // Δημιουργία κουμπιών με στυλ
     private JButton createStyledButton(String text, Color color) {
         JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setFont(appFont);  // Εφαρμογή της κοινής γραμματοσειράς
         button.setBackground(color);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
@@ -97,7 +100,7 @@ public class RecipeApp extends JFrame {
         return button;
     }
 
-    // Άνοιγμα αρχείων συνταγών και προσθήκη τους στη λίστα
+    // Άνοιγμα αρχείων συνταγών
     private void openRecipe() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setMultiSelectionEnabled(true);
@@ -111,8 +114,8 @@ public class RecipeApp extends JFrame {
 
             // Εμφάνιση ειδοποίησης με οδηγίες
             JOptionPane.showMessageDialog(this,
-                    "File(s) loaded successfully!\n" +
-                            "1. Click on the file(s) you loaded on the top-left.\n" +
+                    "Files loaded successfully!\n" +
+                            "1. Click on the files you loaded on the top-left.\n" +
                             "2. Then click 'View Recipe', 'Shopping List', or 'Execute Recipe'.",
                     "Files Loaded",
                     JOptionPane.INFORMATION_MESSAGE);
