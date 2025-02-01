@@ -1,9 +1,15 @@
 package org.cookingRecipes;
+import javax.swing.*;
 
 public class Time extends Recipe {
     private int hours = 0;
     private int minutes = 0;
     private int seconds = 0;
+    private JTextArea displayArea;  // Αναφορά στην JTextArea
+
+    public void setDisplayArea(JTextArea displayArea) {
+        this.displayArea = displayArea;
+    }
 
     @Override
     protected void processLine(String line) {
@@ -24,31 +30,31 @@ public class Time extends Recipe {
 
     @Override
     public void display() {
-        System.out.println("\nΣυνολική ώρα:");
+        if (displayArea != null) {
+            displayArea.append("\nΣυνολική ώρα:\n");
 
-        boolean isFirst = true; //Μεταβλητή για την εισαγωγή κομμάτων
+            boolean isFirst = true;
+            displayArea.append("\t");
 
-        System.out.print("\t");
+            if (hours > 0) {
+                displayArea.append(hours + (hours == 1 ? " hour" : " hours"));
+                isFirst = false;
+            }
+            if (minutes > 0) {
+                if (!isFirst) displayArea.append(", ");
+                displayArea.append(minutes + (minutes == 1 ? " minute" : " minutes"));
+                isFirst = false;
+            }
+            if (seconds > 0) {
+                if (!isFirst) displayArea.append(", ");
+                displayArea.append(seconds + (seconds == 1 ? " second" : " seconds"));
+            }
 
-        if (hours > 0) {
-            System.out.print(hours + (hours == 1 ? " hour" : " hours"));
-            isFirst = false;
+            if (hours == 0 && minutes == 0 && seconds == 0) {
+                displayArea.append("0 seconds");
+            }
+
+            displayArea.append("\n");
         }
-        if (minutes > 0) {
-            if (!isFirst) System.out.print(", ");
-            System.out.print(minutes + (minutes == 1 ? " minute" : " minutes"));
-            isFirst = false;
-        }
-        if (seconds > 0) {
-            if (!isFirst) System.out.print(", ");
-            System.out.print(seconds + (seconds == 1 ? " second" : " seconds"));
-        }
-
-        if (hours == 0 && minutes == 0 && seconds == 0) {
-            System.out.print("0 seconds");
-        }
-
-        System.out.println();
     }
-
 }
